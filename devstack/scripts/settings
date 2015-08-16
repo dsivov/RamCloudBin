@@ -1,0 +1,26 @@
+DRAGONFLOW_REPO=${DRAGONFLOW_REPO:-http://github.com/openstack/dragonflow.git}
+NETWORKING_OVN_REPO=${NETWORKING_OVN_REPO:-http://github.com/openstack/networking-ovn.git}
+DRAGONFLOW_DIR=$DEST/dragonflow
+DRAGONFLOW_BRANCH=${DRAGONFLOW_BRANCH:-master}
+
+RYU_REPO=${RYU_REPO:-http://github.com/osrg/ryu.git}
+RYU_DIR=$DEST/ryu
+RYU_BRANCH=${RYU_BRANCH:-master}
+
+DF_L3_SERVICE_PLUGIN="dragonflow.neutron.services.l3.l3_controller_plugin.ControllerL3ServicePlugin"
+
+DF_L2_AGENT=$DRAGONFLOW_DIR/dragonflow/neutron/agent/l2/ovs_dragonflow_neutron_agent.py
+DF_L3_AGENT=$DRAGONFLOW_DIR/dragonflow/neutron/agent/l3_sdn_agent.py
+DF_LOCAL_CONTROLLER=$DRAGONFLOW_DIR/dragonflow/controller/df_local_controller.py
+
+Q_DF_CONTROLLER_PORT=${Q_DF_CONTROLLER_PORT:-'6633'}
+Q_DF_CONTROLLER_PROTOCOL=${Q_DF_CONTROLLER_PROTOCOL:-'tcp'}
+Q_DF_CONTROLLER_IP=${Q_DF_CONTROLLER_IP:-''$HOST_IP''}
+Q_DF_CONTROLLER_IP=''$Q_DF_CONTROLLER_PROTOCOL':'$Q_DF_CONTROLLER_IP':'$Q_DF_CONTROLLER_PORT''
+
+RAMCLOUD=$DEST/ramcloud
+RAMCLOUD_LIB=$RAMCLOUD/lib
+RAMCLOUD_BIN=$RAMCLOUD/bin
+
+export PYTHONPATH=$PYTHONPATH:$DRAGONFLOW_DIR
+export PYTHONPATH=$PYTHONPATH:$RYU_DIR
