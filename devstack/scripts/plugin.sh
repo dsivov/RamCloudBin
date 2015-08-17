@@ -71,9 +71,9 @@ function install_df {
     popd
     echo "Finished installing etcd"
 
-    echo_summary "Installing ramcloud"
-    if is_service_enabled df-rcdb ; then
-       echo_summary  "Ramclou enabeld, cloning binaries"
+    if is_service_enabled df-ramcloud ; then
+       echo_summary "Installing ramcloud"
+       echo_summary  "Ramcloud enabeld, cloning binaries"
        git_clone https://github.com/dsivov/RamCloudBin.git $RAMCLOUD
        echo export LD_LIBRARY_PATH="$RAMCLOUD_LIB":"$LD_LIBRARY_PATH" | tee -a $HOME/.bashrc
     fi
@@ -188,9 +188,12 @@ function start_df {
         run_process df-etcd "$DEST/etcd/etcd-v2.1.1-linux-amd64/etcd --listen-client-urls http://$REMOTE_DB_IP:4001 --advertise-client-urls http://$REMOTE_DB_IP:4001"
     fi
 
-    if is_service_enabled df-rcdb ; then
-        run_process df-rccrdt "$RAMCLOUD_BIN/coordinator"
-        run_process df-rcmtr "$RAMCLOUD_BIN/server"
+    if is_service_enabled df-rccoordinator ; then
+        run_process df-rccoordinator "$RAMCLOUD_BIN/coordinator -C ${RAMCLUD_TRANSPORT}:host=${RAMCLOUD_COORDINATOR_IP},port=${RAMCLOUD_COORDINATOR_PORT}"
+    fi
+
+    if is_service_enabled df-rcmaster ; then
+        run_process df-rcmaster "$RAMCLOUD_BIN/server ${RAMCLUD_TRANSPORT}:host=${RAMCLOUD_MASTER_IP},port=${RAMCLOUD_MASTER_PORT} -C ${RAMCLUD_TRANSPORT}:host=${RAMCLOUD_COORDINATOR_IP},port=${RAMCLOUD_COORDINATOR_PORT}"
     fi
 }
 
@@ -204,9 +207,11 @@ function stop_df {
     if is_service_enabled df-etcd ; then
         stop_process df-etcd
     fi
-    if is_service_enabled df-rcdb ; then
-        stop_process df-rccrdt
-        stop_process df-rcmtr
+    if is_service_enabled df-rccoordinator ; then
+        stop_process df-rccoordinator
+    fi
+     if is_service_enabled df-rcmaster ; then
+        stop_process df-rcmaster
     fi
     sudo killall ovsdb-server
 }
