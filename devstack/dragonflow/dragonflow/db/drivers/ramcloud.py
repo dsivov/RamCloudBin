@@ -244,7 +244,7 @@ class RAMCloud(object):
             raise NoObjectError()
         if status == 3:
             raise ObjectExistsError()
-        if status == 4:
+        if status == 5:
             raise VersionError(given_version, actual_version)
         raise RCException(status)
 
